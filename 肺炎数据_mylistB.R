@@ -1,0 +1,987 @@
+setwd("D:/R/小于6岁second")
+dir()
+lisname<-gsub(pattern='[.csv]',replacement='',x=dir())
+mylistB<-list()
+for(i in 1:length(dir())){
+  mylistB[[i]]<-read.csv(dir()[i],header=T,stringsAsFactors=F,blank.lines.skip=F,na.strings=c('-','/','#N/A',''))
+}
+names(mylistB)<-lisname
+
+mylistB_colnames<-list()
+for(i in 1:length(lisname)){
+  mylistB_colnames[[i]]<-colnames(mylistB[[lisname[i]]])
+}
+names(mylistB_colnames)<-lisname
+
+funcB<-function(x,y){
+  a<-grep(pattern=x,x=mylistB_colnames[[y]],value=T)
+  b<-grep(pattern=x,x=mylistB_colnames[[y]],value=F)
+  return(data.frame(匹配=a,下标=b))
+}
+
+afuncB<-function(x){
+  alis<-list()
+  for(i in 1:length(lisname)){
+    alis[[i]]<-funcB(x,lisname[i])
+  }
+  names(alis)<-lisname
+  return(alis)
+}
+
+发病时间<-mylistB$入院第一天[[35]]
+第一次就诊<-mylistB$入院第一天[[35]]
+入院时间<-mylistB$入院第一天[[33]]
+是否发热<-mylistB$入院第一天[[12]]
+最高体温<-mylistB$入院第一天[[49]]
+是否低体温<-mylistB$入院第一天[[193]]
+是否咳嗽<-mylistB$入院第一天[[27]]
+是否咳痰<-mylistB$入院第一天[[28]]
+咯痰颜色<-mylistB$入院第一天[[51]]
+是否胸痛<-mylistB$入院第一天[[31]]
+是否呼吸困难<-mylistB$入院第一天[[202]]
+是否流涕<-mylistB$入院第一天[[234]]
+是否寒战<-mylistB$入院第一天[[77]]
+是否乏力<-rep(NA,length(发病时间))
+是否腹泻<-rep(NA,length(发病时间))
+是否家族聚集<-mylistB$基本信息[[40]]
+入组前抗菌素应用<-rep(NA,length(发病时间))
+入组前糖皮质激素应用<-rep(NA,length(发病时间))
+入组前药物应用史<-rep(NA,length(发病时间))
+入组前危险因素<-rep(NA,length(发病时间))
+
+现病史<-data.frame(
+  发病时间,
+  第一次就诊,
+  入院时间,
+  是否发热,
+  最高体温,
+  是否低体温,
+  是否咳嗽,
+  是否咳痰,
+  咯痰颜色,
+  是否胸痛,
+  是否呼吸困难,
+  是否流涕,
+  是否寒战,
+  是否乏力,
+  是否腹泻,
+  是否家族聚集,
+  入组前抗菌素应用,
+  入组前糖皮质激素应用,
+  入组前药物应用史,
+  入组前危险因素,
+  stringsAsFactors=F
+)
+write.table(t(现病史),file='d:/r/材料/小于6岁_现病史.csv',sep=',',col.names=F)
+
+上呼吸道感染<-mylistB$基本信息[[30]]
+是否医院就诊<-rep(NA,length(上呼吸道感染))
+诊断编号<-rep(NA,length(上呼吸道感染))
+是否使用药物<-rep(NA,length(上呼吸道感染))
+是否从上次疾病中恢复<-rep(NA,length(上呼吸道感染))
+近一年是否有肺炎病史<-rep(NA,length(上呼吸道感染))
+次数为<-rep(NA,length(上呼吸道感染))
+最严重一次时间<-rep(NA,length(上呼吸道感染))
+是否有以下情况<-rep(NA,length(上呼吸道感染))
+是否5年内反复皮肤感染<-rep(NA,length(上呼吸道感染))
+支气管哮喘<-rep(NA,length(上呼吸道感染))
+是否住院<-rep(NA,length(上呼吸道感染))
+最近住院时间<-rep(NA,length(上呼吸道感染))
+是否哮喘发作机械通气<-rep(NA,length(上呼吸道感染))
+是否正在吸入激素<-rep(NA,length(上呼吸道感染))
+慢性呼吸系统疾病<-rep(NA,length(上呼吸道感染))
+心血管疾病<-rep(NA,length(上呼吸道感染))
+糖尿病<-rep(NA,length(上呼吸道感染))
+血液系统<-rep(NA,length(上呼吸道感染))
+肾脏系统<-rep(NA,length(上呼吸道感染))
+慢性肝病<-rep(NA,length(上呼吸道感染))
+免疫抑制性疾病<-rep(NA,length(上呼吸道感染))
+HIV感染CD4计数<-rep(NA,length(上呼吸道感染))
+肿瘤<-rep(NA,length(上呼吸道感染))
+神经肌肉系统<-rep(NA,length(上呼吸道感染))
+其他染色体不正常疾病<-rep(NA,length(上呼吸道感染))
+苯丙酮尿<-rep(NA,length(上呼吸道感染))
+是否家庭氧疗<-rep(NA,length(上呼吸道感染))
+流感疫苗<-rep(NA,length(上呼吸道感染))
+肺炎链球菌疫苗<-rep(NA,length(上呼吸道感染))
+
+既往史<-data.frame(
+  上呼吸道感染,
+  是否医院就诊,
+  诊断编号,
+  是否使用药物,
+  是否从上次疾病中恢复,
+  近一年是否有肺炎病史,
+  次数为,
+  最严重一次时间,
+  是否有以下情况,
+  是否5年内反复皮肤感染,
+  支气管哮喘,
+  是否住院,
+  最近住院时间,
+  是否哮喘发作机械通气,
+  是否正在吸入激素,
+  慢性呼吸系统疾病,
+  心血管疾病,
+  糖尿病,
+  血液系统,
+  肾脏系统,
+  慢性肝病,
+  免疫抑制性疾病,
+  HIV感染CD4计数,
+  肿瘤,
+  神经肌肉系统,
+  其他染色体不正常疾病,
+  苯丙酮尿,
+  是否家庭氧疗,
+  流感疫苗,
+  肺炎链球菌疫苗,
+  stringsAsFactors=F
+)
+write.table(t(既往史),file='d:/r/材料/小于6岁_既往史.csv',sep=',',col.names=F)
+
+家庭成员几个<-mylistB$基本信息[[38]]
+家庭成员是否呼吸道疾病<-mylistB$基本信息[[40]]
+是否照顾儿童<-rep(NA,length(家庭成员几个))
+是否上幼儿园<-rep(NA,length(家庭成员几个))
+有无旅游史<-mylistB$基本信息[[48]]
+吸烟史<-rep(NA,length(家庭成员几个))
+家庭成员是否吸烟<-rep(NA,length(家庭成员几个))
+是否室内吸烟<-rep(NA,length(家庭成员几个))
+是否酗酒<-rep(NA,length(家庭成员几个))
+
+社会家庭史<-data.frame(
+  家庭成员几个,
+  家庭成员是否呼吸道疾病,
+  是否照顾儿童,
+  是否上幼儿园,
+  有无旅游史,
+  吸烟史,
+  家庭成员是否吸烟,
+  是否室内吸烟,
+  是否酗酒,
+  stringsAsFactors=F
+)
+write.table(t(社会家庭史),file='d:/r/材料/小于6岁_社会家庭史.csv',sep=',',col.names=F)
+#入组后24小时内_代码开始。
+是否发热<-mylistB$入院第一天[[12]]
+最高体温<-mylistB$入院第一天[[49]]
+体温<-mylistB$入院第一天[[193]]
+是否咳嗽<-mylistB$入院第一天[[28]]
+咯痰颜色<-mylistB$入院第一天[[51]]
+是否胸痛<-mylistB$入院第一天[[31]]
+是否呼吸困难<-mylistB$入院第一天[[202]]
+是否流涕<-mylistB$入院第一天[[234]]
+是否寒战<-mylistB$入院第一天[[77]]
+是否有乏力等<-rep(NA,length(是否发热))
+是否腹泻<-rep(NA,length(是否发热))
+Tmax<-mylistB$入院第一天[[49]]
+Tmin<-mylistB$入院第一天[[193]]
+心率<-mylistB$入院第一天[[170]]
+呼吸<-mylistB$入院第一天[[176]]
+收缩压<-mylistB$入院第一天[[194]]
+舒张压<-mylistB$入院第一天[[196]]
+有无意识障碍<-mylistB$入院第一天[[210]]
+有无紫绀<-mylistB$入院第一天[[229]]
+湿啰音<-mylistB$入院第一天[[207]]
+干啰音<-mylistB$入院第一天[[223]]
+有无双下肢肿胀<-mylistB$入院第一天[[195]]
+吸氧<-mylistB$入院第二天[[79]]
+吸氧方式<-mylistB$入院第二天[[80]]
+氧流量<-mylistB$入院第一天[[77]]
+氧浓度<-mylistB$入院第二天[[54]]
+
+DF<-data.frame(mylistB$入院第一天[[252]],mylistB$入院第二天[[45]],stringsAsFactors=F)
+DF_Logic<-as.data.frame(is.na(DF))
+Index_TRUE<-which(DF_Logic[[1]]==T)
+DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+指端血氧饱和度<-DF[[1]]
+
+白细胞计数<-mylistB$入院第一天[[113]]
+中性粒百分率<-mylistB$入院第一天[[116]]#中间变量，不记入结果表格
+中性粒绝对计数<-白细胞计数*中性粒百分率/100
+
+DF<-data.frame(mylistB$入院第一天[[91]],mylistB$入院第一天[[90]],stringsAsFactors=F)
+DF_Logic<-as.data.frame(is.na(DF))
+Index_TRUE<-which(DF_Logic[[1]]==T)
+DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+淋巴细胞百分率<-DF[[1]]#中间变量，不记入结果表格
+
+淋巴细胞绝对计数<-白细胞计数*淋巴细胞百分率/100
+DF<-data.frame(mylistB$入院第一天[[95]],mylistB$入院第一天[[94]],stringsAsFactors=F)
+DF_Logic<-as.data.frame(is.na(DF))
+Index_TRUE<-which(DF_Logic[[1]]==T)
+DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+血红蛋白<-DF[[1]]
+红细胞比积<-rep(NA,length(是否发热))
+
+DF<-data.frame(mylistB$入院第一天[[98]],mylistB$入院第一天[[97]],mylistB$入院第一天[[96]],stringsAsFactors=F)
+DF_Logic<-as.data.frame(is.na(DF))
+Index_TRUE<-which(DF_Logic[[1]]==T)
+index_false<-which(is.na(DF[[3]][Index_TRUE])==F)
+DF[[2]][Index_TRUE][index_false]<-DF[[3]][Index_TRUE][index_false]
+DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+血小板计数<-DF[[1]]
+白蛋白<-mylistB$入院第二天[[190]]
+
+DF<-data.frame(mylistB$入院第一天[[107]],mylistB$入院第一天[[106]],mylistB$入院第一天[[105]],stringsAsFactors=F)
+DF_Logic<-as.data.frame(is.na(DF))
+Index_TRUE<-which(DF_Logic[[1]]==T)
+index_false<-which(is.na(DF[[3]][Index_TRUE])==F)
+DF[[2]][Index_TRUE][index_false]<-DF[[3]][Index_TRUE][index_false]
+DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+C反应蛋白<-DF[[1]]
+
+乳酸脱氢酶<-rep(NA,length(是否发热))
+谷草转氨酶<-mylistB$入院第二天[[176]]
+谷丙转氨酶<-mylistB$入院第二天[[175]]
+碱性磷酸酶<-mylistB$入院第二天[[189]]
+总胆红素<-mylistB$入院第二天[[188]]
+直接胆红素<-mylistB$入院第二天[[178]]
+肌酶<-mylistB$入院第二天[[187]]
+血尿素氮<-mylistB$入院第二天[[171]]
+血肌酐<-mylistB$入院第二天[[179]]
+血糖<-mylistB$入院第二天[[174]]
+血钾<-mylistB$入院第二天[[177]]
+血钠<-mylistB$入院第二天[[185]]
+CD4<-mylistB$入院第二天[[224]]
+CD8<-mylistB$入院第二天[[220]]
+NK<-mylistB$入院第二天[[221]]
+NKT<-rep(NA,length(是否发热))
+CD4_CD8<-mylistB$入院第二天[[225]]
+红细胞沉降率<-mylistB$入院第二天[[147]]
+
+DF<-data.frame(mylistB$入院第二天[[146]],mylistB$入院第一天[[108]],stringsAsFactors=F)
+DF_Logic<-as.data.frame(is.na(DF))
+Index_TRUE<-which(DF_Logic[[1]]==T)
+DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+降钙素原<-DF[[1]]
+D二聚体<-mylistB$入院第二天[[206]]
+凝血酶原时间<-mylistB$入院第二天[[210]]
+部分活化凝血酶原时间<-mylistB$入院第二天[[207]]
+国际标准化比值<-mylistB$入院第二天[[209]]
+脑钠尿肽<-rep(NA,length(是否发热))
+血清铁蛋白<-mylistB$入院第二天[[234]]
+G试验<-rep(NA,length(是否发热))
+GM试验<-rep(NA,length(是否发热))
+
+DF<-data.frame(mylistB$入院第二天[[192]],mylistB$入院第一天[[121]],stringsAsFactors=F)
+DF_Logic<-as.data.frame(is.na(DF))
+Index_TRUE<-which(DF_Logic[[1]]==T)
+DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+PH<-DF[[1]]
+
+Func_2cols<-function(DF){
+  DF_Logic<-as.data.frame(is.na(DF))
+  Index_TRUE<-which(DF_Logic[[1]]==T)
+  DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+  return(DF[[1]])
+}
+
+Func_3cols<-function(DF){
+  DF_Logic<-as.data.frame(is.na(DF))
+  Index_TRUE<-which(DF_Logic[[1]]==T)
+  index_false<-which(is.na(DF[[3]][Index_TRUE])==F)
+  DF[[2]][Index_TRUE][index_false]<-DF[[3]][Index_TRUE][index_false]
+  DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+  return(DF[[1]])
+}
+
+DF<-data.frame(mylistB$入院第一天[[156]],mylistB$入院第二天[[200]],stringsAsFactors=F)
+PaCO2<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第一天[[147]],mylistB$入院第二天[[198]],stringsAsFactors=F)
+SpO2<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第一天[[140]],mylistB$入院第二天[[196]],stringsAsFactors=F)
+PaO2<-Func_2cols(DF)
+HCO3<-rep(NA,length(是否发热))
+DF<-data.frame(mylistB$入院第二天[[199]],mylistB$入院第一天[[151]],stringsAsFactors=F)
+BE<-Func_2cols(DF)
+氧合指数<-rep(NA,length(是否发热))
+胸片<-mylistB$入院第一天[[154]]
+胸片检查日期<-mylistB$入院第一天[[122]]
+胸腔积液<-mylistB$入院第一天[[148]]
+多叶段浸润<-rep(NA,length(是否发热))
+肺CT<-mylistB$入院第一天[[92]]
+检查日期肺CT<-mylistB$入院第一天[[139]]
+胸腔积液肺CT<-rep(NA,length(是否发热))
+多叶段浸润肺CT<-rep(NA,length(是否发热))
+有无意识障碍<-mylistB$入院第一天[[210]]
+血尿素氮<-mylistB$入院第二天[[171]]
+呼吸<-mylistB$入院第一天[[176]]
+收缩压<-mylistB$入院第一天[[194]]
+舒张压<-mylistB$入院第一天[[196]]
+年龄<-rep('否',length(是否发热))
+病毒性肺炎诊断<-mylistB$登记信息[[12]]
+细菌性肺炎诊断<-mylistB$登记信息[[10]]
+不典型病原体肺炎诊断<-mylistB$登记信息[[8]]
+体温<-mylistB$入院第一天[[193]]
+心率<-mylistB$入院第一天[[170]]
+呼吸<-mylistB$入院第一天[[176]]
+收缩压<-mylistB$入院第一天[[194]]
+DF<-data.frame(mylistB$入院第一天[[140]],mylistB$入院第二天[[196]],stringsAsFactors=F)
+动脉血气分析PaO2数值<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第一天[[147]],mylistB$入院第二天[[198]],stringsAsFactors=F)
+动脉血气分析SaO2数值<-Func_2cols(DF)
+
+入组后24小时内<-data.frame(
+  是否发热,
+  最高体温,
+  体温,
+  是否咳嗽,
+  咯痰颜色,
+  是否胸痛,
+  是否呼吸困难,
+  是否流涕,
+  是否寒战,
+  是否有乏力等,
+  是否腹泻,
+  Tmax,
+  Tmin,
+  心率,
+  呼吸,
+  收缩压,
+  舒张压,
+  有无意识障碍,
+  有无紫绀,
+  湿啰音,
+  干啰音,
+  有无双下肢肿胀,
+  吸氧,
+  吸氧方式,
+  氧流量,
+  氧浓度,
+  指端血氧饱和度,
+  白细胞计数,
+  中性粒绝对计数,
+  淋巴细胞绝对计数,
+  血红蛋白,
+  红细胞比积,
+  血小板计数,
+  白蛋白,
+  乳酸脱氢酶,
+  谷草转氨酶,
+  谷丙转氨酶,
+  碱性磷酸酶,
+  总胆红素,
+  直接胆红素,
+  肌酶,
+  血尿素氮,
+  血肌酐,
+  血糖,
+  血钾,
+  血钠,
+  CD4,
+  CD8,
+  NK,
+  NKT,
+  CD4_CD8,
+  红细胞沉降率,
+  C反应蛋白,
+  降钙素原,
+  D二聚体,
+  凝血酶原时间,
+  部分活化凝血酶原时间,
+  国际标准化比值,
+  脑钠尿肽,
+  血清铁蛋白,
+  G试验,
+  GM试验,
+  PH,
+  PaCO2,
+  SpO2,
+  PaO2,
+  HCO3,
+  BE,
+  氧合指数,
+  胸片,
+  胸片检查日期,
+  胸腔积液,
+  多叶段浸润,
+  肺CT,
+  检查日期肺CT,
+  胸腔积液肺CT,
+  多叶段浸润肺CT,
+  有无意识障碍,
+  血尿素氮,
+  呼吸,
+  收缩压,
+  舒张压,
+  年龄,
+  病毒性肺炎诊断,
+  细菌性肺炎诊断,
+  不典型病原体肺炎诊断,
+  体温,
+  心率,
+  呼吸,
+  收缩压,
+  动脉血气分析PaO2数值,
+  动脉血气分析SaO2数值,
+  stringsAsFactors=F
+)
+write.table(t(入组后24小时内),file='d:/r/材料/小于6岁_入组后24小时内.csv',sep=',',col.names=F)
+#入组后24小时内_代码结束。
+
+#入组后72或96小时内_代码开始。
+setwd("D:/R/小于6岁second")
+dir()
+prolisname<-gsub(pattern='[.csv]',replacement='',x=dir())
+lisname<-prolisname[c(3,2,9,16)]
+Newdir<-dir()[c(3,2,9,16)]
+
+mylistB<-list()
+for(i in 1:length(Newdir)){
+  mylistB[[i]]<-read.csv(Newdir[i],header=T,stringsAsFactors=F,blank.lines.skip=F,na.strings=c('-','/','#N/A',''))
+}
+names(mylistB)<-lisname
+
+mylistB_colnames<-list()
+for(i in 1:length(lisname)){
+  mylistB_colnames[[i]]<-colnames(mylistB[[lisname[i]]])
+}
+names(mylistB_colnames)<-lisname
+
+funcB<-function(x,y){
+  a<-grep(pattern=x,x=mylistB_colnames[[y]],value=T)
+  b<-grep(pattern=x,x=mylistB_colnames[[y]],value=F)
+  return(data.frame(匹配=a,下标=b))
+}
+
+afuncB<-function(x){
+  alis<-list()
+  for(i in 1:length(lisname)){
+    alis[[i]]<-funcB(x,lisname[i])
+  }
+  names(alis)<-lisname
+  return(alis)
+}
+
+Func_2cols<-function(DF){
+  DF_Logic<-as.data.frame(is.na(DF))
+  Index_TRUE<-which(DF_Logic[[1]]==T)
+  DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+  return(DF[[1]])
+}
+
+Func_3cols<-function(DF){
+  DF_Logic<-as.data.frame(is.na(DF))
+  Index_TRUE<-which(DF_Logic[[1]]==T)
+  index_false<-which(is.na(DF[[3]][Index_TRUE])==F)
+  DF[[2]][Index_TRUE][index_false]<-DF[[3]][Index_TRUE][index_false]
+  DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+  return(DF[[1]])
+}
+
+是否发热<-mylistB$入院第三天[[8]]
+DF<-data.frame(mylistB$入院第三天[[20]],mylistB$入院第四天[[11]],stringsAsFactors=F)
+体温<-最高体温<-Func_2cols(DF)
+是否咳嗽<-mylistB$入院第三天[[11]]
+咯痰颜色<-mylistB$入院第三天[[22]]
+DF<-data.frame(mylistB$入院第四天[[17]],mylistB$入院第三天[[14]],stringsAsFactors=F)
+是否胸痛<-Func_2cols(DF)
+是否呼吸困难<-mylistB$入院第三天[[40]]
+是否流涕<-rep(NA,length(是否发热))
+DF<-data.frame(mylistB$入院第三天[[28]],mylistB$入院第四天[[14]],stringsAsFactors=F)
+是否寒战<-Func_2cols(DF)
+是否有乏力等<-rep(NA,length(是否发热))
+是否腹泻<-rep(NA,length(是否发热))
+DF<-data.frame(mylistB$入院第三天[[20]],mylistB$入院第四天[[11]],stringsAsFactors=F)
+Tmin<-Tmax<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第三天[[46]],mylistB$入院第四天[[21]],stringsAsFactors=F)
+心率<-Func_2cols(DF)
+呼吸<-mylistB$入院第三天[[35]]
+DF<-data.frame(mylistB$入院第三天[[37]],mylistB$入院第四天[[25]],stringsAsFactors=F)
+收缩压<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第三天[[31]],mylistB$入院第四天[[20]],stringsAsFactors=F)
+舒张压<-Func_2cols(DF)
+有无意识障碍<-rep(NA,length(是否发热))
+有无紫绀<-rep(NA,length(是否发热))
+湿啰音<-mylistB$入院第三天[[34]]
+干啰音<-rep(NA,length(是否发热))
+有无双下肢肿胀<-rep(NA,length(是否发热))
+吸氧<-mylistB$入院第三天[[71]]
+吸氧方式<-mylistB$入院第三天[[82]]
+DF<-data.frame(mylistB$入院第三天[[96]],mylistB$入院第三天[[99]],stringsAsFactors=F)
+氧流量<-Func_2cols(DF)
+氧浓度<-mylistB$入院第三天[[54]]
+DF<-data.frame(mylistB$入院第三天[[45]],mylistB$入院第四天[[23]],stringsAsFactors=F)
+指端血氧饱和度<-Func_2cols(DF)
+白细胞计数<-mylistB$入院第三天[[149]]
+中性粒细胞百分率<-mylistB$入院第三天[[148]]#中间变量，不记入结果表格。
+中性粒细胞绝对计数<-as.numeric(白细胞计数)*as.numeric(中性粒细胞百分率)/100
+淋巴细胞绝对计数<-mylistB$入院第三天[[144]]
+血红蛋白<-mylistB$入院第三天[[150]]
+红细胞比积<-rep(NA,length(是否发热))
+血小板计数<-mylistB$入院第三天[[142]]
+白蛋白<-mylistB$入院第三天[[190]]
+乳酸脱氢酶<-rep(NA,length(是否发热))
+谷草转氨酶<-mylistB$入院第三天[[176]]
+谷丙转氨酶<-mylistB$入院第三天[[175]]
+碱性磷酸酶<-mylistB$入院第三天[[189]]
+总胆红素<-mylistB$入院第三天[[188]]
+直接胆红素<-mylistB$入院第三天[[178]]
+DF<-data.frame(mylistB$入院第三天[[187]],mylistB$入院第四天[[168]],stringsAsFactors=F)
+肌酶<-Func_2cols(DF)
+血尿素氮<-mylistB$入院第三天[[171]]
+血肌酐<-mylistB$入院第三天[[179]]
+血糖<-mylistB$入院第三天[[174]]
+血钾<-mylistB$入院第三天[[177]]
+血钠<-mylistB$入院第三天[[185]]
+DF<-data.frame(mylistB$入院第三天[[224]],mylistB$入院第四天[[205]],stringsAsFactors=F)
+CD4<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第三天[[220]],mylistB$入院第四天[[201]],stringsAsFactors=F)
+CD8<-mylistB$入院第三天[[220]]
+DF<-data.frame(mylistB$入院第三天[[221]],mylistB$入院第四天[[202]],stringsAsFactors=F)
+NK<-Func_2cols(DF)
+NKT<-rep(NA,length(是否发热))
+DF<-data.frame(mylistB$入院第三天[[225]],mylistB$入院第四天[[206]],stringsAsFactors=F)
+CD4_CD8<-Func_2cols(DF)
+红细胞沉降率<-mylistB$入院第三天[[147]]
+C反应蛋白<-mylistB$入院第三天[[145]]
+DF<-data.frame(mylistB$入院第三天[[146]],mylistB$入院第四天[[127]],stringsAsFactors=F)
+降钙素原<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第三天[[206]],mylistB$入院第四天[[187]],stringsAsFactors=F)
+D二聚体<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第三天[[210]],mylistB$入院第四天[[191]],stringsAsFactors=F)
+凝血酶原时间<-Func_2cols(DF)
+部分活化凝血酶原时间<-mylistB$入院第三天[[207]]
+DF<-data.frame(mylistB$入院第三天[[209]],mylistB$入院第四天[[190]],stringsAsFactors=F)
+国际标准化比值INR<-Func_2cols(DF)
+脑钠尿肽<-rep(NA,length(是否发热))
+DF<-data.frame(mylistB$入院第三天[[234]],mylistB$入院第四天[[215]],stringsAsFactors=F)
+血清铁蛋白<-Func_2cols(DF)
+胸片<-rep(NA,length(是否发热))
+胸片检查日期<-rep(NA,length(是否发热))
+胸腔积液<-rep(NA,length(是否发热))
+多叶段浸润<-rep(NA,length(是否发热))
+检查日期肺CT<-rep(NA,length(是否发热))
+胸腔积液肺CT<-rep(NA,length(是否发热))
+多叶段浸润肺CT<-rep(NA,length(是否发热))
+DF<-data.frame(mylistB$入院第三天[[20]],mylistB$入院第四天[[11]],stringsAsFactors=F)
+体温<-最高体温<-Func_2cols(DF)
+DF<-data.frame(mylistB$入院第三天[[46]],mylistB$入院第四天[[21]],stringsAsFactors=F)
+心率<-Func_2cols(DF)
+呼吸<-mylistB$入院第三天[[35]]
+DF<-data.frame(mylistB$入院第三天[[37]],mylistB$入院第四天[[25]],stringsAsFactors=F)
+收缩压<-Func_2cols(DF)
+动脉血气分析SaO2数值<-mylistB$入院第三天[[198]]
+
+入组后72或96小时内<-data.frame(
+  是否发热,
+  最高体温,
+  体温,
+  是否咳嗽,
+  咯痰颜色,
+  是否胸痛,
+  是否呼吸困难,
+  是否流涕,
+  是否寒战,
+  是否有乏力等,
+  是否腹泻,
+  Tmax,
+  Tmin,
+  心率,
+  呼吸,
+  收缩压,
+  舒张压,
+  有无意识障碍,
+  有无紫绀,
+  湿啰音,
+  干啰音,
+  有无双下肢肿胀,
+  吸氧,
+  吸氧方式,
+  氧流量,
+  氧浓度,
+  指端血氧饱和度,
+  白细胞计数,
+  中性粒细胞绝对计数,
+  淋巴细胞绝对计数,
+  血红蛋白,
+  红细胞比积,
+  血小板计数,
+  白蛋白,
+  乳酸脱氢酶,
+  谷草转氨酶,
+  谷丙转氨酶,
+  碱性磷酸酶,
+  总胆红素,
+  直接胆红素,
+  肌酶,
+  血尿素氮,
+  血肌酐,
+  血糖,
+  血钾,
+  血钠,
+  CD4,
+  CD8,
+  NK,
+  NKT,
+  CD4_CD8,
+  红细胞沉降率,
+  C反应蛋白,
+  降钙素原,
+  D二聚体,
+  凝血酶原时间,
+  部分活化凝血酶原时间,
+  国际标准化比值INR,
+  脑钠尿肽,
+  血清铁蛋白,
+  胸片,
+  胸片检查日期,
+  胸腔积液,
+  多叶段浸润,
+  检查日期肺CT,
+  胸腔积液肺CT,
+  多叶段浸润肺CT,
+  体温,
+  心率,
+  呼吸,
+  收缩压,
+  动脉血气分析SaO2数值,
+  stringsAsFactors=F
+)
+write.table(t(入组后72或96小时内),file='d:/r/材料/小于6岁_入组后72或96小时内.csv',sep=',',col.names=F)
+#入组后72或96小时内_代码结束。
+
+#病原学结果和入组药物治疗和出院相关情况_代码开始。
+setwd("D:/R/小于6岁second")
+dir()
+lisname<-gsub(pattern='[.csv]',replacement='',x=dir())
+
+mylistB<-list()
+for(i in 1:length(dir())){
+  mylistB[[i]]<-read.csv(dir()[i],header=T,stringsAsFactors=F,blank.lines.skip=F,na.strings=c('-','/','#N/A',''))
+}
+names(mylistB)<-lisname
+
+mylistB_colnames<-list()
+for(i in 1:length(lisname)){
+  mylistB_colnames[[i]]<-colnames(mylistB[[lisname[i]]])
+}
+names(mylistB_colnames)<-lisname
+
+funcB<-function(x,y){
+  a<-grep(pattern=x,x=mylistB_colnames[[y]],value=T)
+  b<-grep(pattern=x,x=mylistB_colnames[[y]],value=F)
+  return(data.frame(匹配=a,下标=b))
+}
+
+afuncB<-function(x){
+  alis<-list()
+  for(i in 1:length(lisname)){
+    alis[[i]]<-funcB(x,lisname[i])
+  }
+  names(alis)<-lisname
+  return(alis)
+}
+
+血培养标本采集时间<-mylistB$总中心病原学检查[[247]]
+入组后48h内血培养<-mylistB$登记信息[[4]]
+普通细菌培养标本采集时间<-mylistB$总中心病原学检查[[129]]
+入组后48h内呼吸道标本普通细菌培养<-paste(mylistB$登记信息[[5]],mylistB$登记信息[[6]],sep='；')
+是否胸水培养<-rep('否',68)
+是否肺泡灌洗液培养<-rep('否',68)
+气管内吸出物标本采集时间<-rep(NA,68)
+是否支气管灌洗液气管内吸出物培养<-mylistB$登记信息[[3]]
+脑脊液CSF<-rep('否',68)
+肺组织穿刺标本<-rep('否',68)
+尿标本抗原检测<-rep('否',68)
+呼吸道标本流感抗原检查<-mylistB$登记信息[[12]]
+肺炎支原体特异性抗体检测<-mylistB$登记信息[[10]]
+肺炎衣原体特异性抗体检测<-rep('其他',68)
+嗜肺军团菌特异性抗体检测<-rep(NA,68)
+伯氏立克次体检测<-rep(NA,68)
+鼻_咽拭子病原学检测结果<-mylistB$登记信息[[12]]
+鼻_咽拭子标本收集日期<-mylistB$总中心病原学检查[[16]]
+鼻_咽拭子标本完成日期<-mylistB$总中心病原学检查[[15]]
+痰病原学检测结果<-rep(NA,68)
+胸水病原学检测结果<-rep(NA,68)
+气道内吸出物病原学检测结果<-rep(NA,68)
+肺泡灌洗液病原学检测结果<-rep(NA,68)
+患者其他治疗药物<-mylistB$入院第二天[[84]]
+患者雾化吸入治疗药物<-mylistB$入院第二天[[74]]
+患者抗病毒治疗药物<-mylistB$入院第二天[[76]]
+
+患者出院日期<-mylistB$出院信息[[6]]
+
+转归情况<-mylistB$出院信息[[38]]
+患者入院日期<-mylistB$入院第一天[[33]]#中间变量，不记入结果表格。
+
+入院年<-substr(患者入院日期,start=nchar(患者入院日期)-3,stop=nchar(患者入院日期))#中间变量
+入院月日<-substr(患者入院日期,start=1,stop=nchar(患者入院日期)-5)#中间变量
+患者入院日期2<-paste(入院年,'/',入院月日,sep='')#中间变量
+
+出院年<-substr(患者出院日期,start=nchar(患者出院日期)-3,stop=nchar(患者出院日期))#中间变量
+出院月日<-substr(患者出院日期,start=1,stop=nchar(患者出院日期)-5)#中间变量
+患者出院日期2<-paste(出院年,'/',出院月日,sep='')#中间变量
+
+患者入院日期2[22]<-'2015/1/5'
+患者出院日期2[22]<-'2015/1/25'
+患者出院日期2[34]<-'2014/2/4'
+患者入院日期2[16]<-'2014/12/22'
+
+本次住院天数<-as.Date(患者出院日期2)-as.Date(患者入院日期2)
+患者出院日期<-患者出院日期2
+本次住院费用<-mylistB$出院信息[[32]]
+
+病原学_药物治疗_出院<-data.frame(
+  血培养标本采集时间,
+  入组后48h内血培养,
+  普通细菌培养标本采集时间,
+  入组后48h内呼吸道标本普通细菌培养,
+  是否胸水培养,
+  是否肺泡灌洗液培养,
+  气管内吸出物标本采集时间,
+  是否支气管灌洗液气管内吸出物培养,
+  脑脊液CSF,
+  肺组织穿刺标本,
+  尿标本抗原检测,
+  呼吸道标本流感抗原检查,
+  肺炎支原体特异性抗体检测,
+  肺炎衣原体特异性抗体检测,
+  嗜肺军团菌特异性抗体检测,
+  伯氏立克次体检测,
+  鼻_咽拭子病原学检测结果,
+  鼻_咽拭子标本收集日期,
+  鼻_咽拭子标本完成日期,
+  痰病原学检测结果,
+  胸水病原学检测结果,
+  气道内吸出物病原学检测结果,
+  肺泡灌洗液病原学检测结果,
+  患者其他治疗药物,
+  患者雾化吸入治疗药物,
+  患者抗病毒治疗药物,
+  患者出院日期,
+  转归情况,
+  本次住院天数,
+  本次住院费用,
+  stringsAsFactors=F
+)
+write.table(t(病原学_药物治疗_出院),file='d:/r/材料/小于6岁_病原学_药物治疗_出院.csv',sep=',',col.names=F)
+#病原学结果和入组药物治疗和出院相关情况_代码结束。
+
+#出院前一天_代码开始。
+setwd("D:/R/小于6岁second")
+dir()
+Prolisname<-gsub(pattern='[.csv]',replacement='',x=dir())
+Lisname<-Prolisname[c(2,17,7,8,4,6,13,15,10,11,12,14)]
+Newdir<-dir()[c(2,17,7,8,4,6,13,15,10,11,12,14)]
+
+mylistB<-list()
+for(i in 1:length(Newdir)){
+  mylistB[[i]]<-read.csv(Newdir[i],header=T,stringsAsFactors=F,blank.lines.skip=F,na.strings=c('-','/','#N/A',''))
+}
+names(mylistB)<-Lisname
+
+mylistB_colnames<-list()
+for(i in 1:length(Lisname)){
+  mylistB_colnames[[i]]<-colnames(mylistB[[Lisname[i]]])
+}
+names(mylistB_colnames)<-Lisname
+
+funcB<-function(x,y){
+  a<-grep(pattern=x,x=mylistB_colnames[[y]],value=T)
+  b<-grep(pattern=x,x=mylistB_colnames[[y]],value=F)
+  return(data.frame(匹配=a,下标=b))
+}
+
+afuncB<-function(x){
+  alis<-list()
+  for(i in 1:length(Lisname)){
+    alis[[i]]<-funcB(x,Lisname[i])
+  }
+  names(alis)<-Lisname
+  return(alis)
+}
+
+Func_2cols<-function(DF){
+  DF_Logic<-as.data.frame(is.na(DF))
+  Index_TRUE<-which(DF_Logic[[1]]==T)
+  DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+  return(DF[[1]])
+}
+
+Func_3cols<-function(DF){
+  DF_Logic<-as.data.frame(is.na(DF))
+  Index_TRUE<-which(DF_Logic[[1]]==T)
+  index_false<-which(is.na(DF[[3]][Index_TRUE])==F)
+  DF[[2]][Index_TRUE][index_false]<-DF[[3]][Index_TRUE][index_false]
+  DF[[1]][Index_TRUE]<-DF[[2]][Index_TRUE]
+  return(DF[[1]])
+}
+
+Func_Last<-function(x){
+  DataF<-data.frame(mylistB$入院第五天[[x]],mylistB$入院第六天[[x]],mylistB$入院第七天[[x]],mylistB$入院第八天[[x]],mylistB$入院第九天[[x]],mylistB$入院第十天[[x]],mylistB$入院第十一天[[x]],mylistB$入院第十二天[[x]],mylistB$入院第十三天[[x]],mylistB$入院第十四天[[x]],mylistB$入院第十五天[[x]],stringsAsFactors=F)
+  Matrix_DataF<-as.matrix(DataF)
+  for(i in 1:68){
+    if(identical(Matrix_DataF[i,]%in%NA,rep(TRUE,11))){
+      Matrix_DataF[i,]<-rep('NA',11)
+    }else{}
+  }
+  Clean<-c()
+  for(i in 1:68){
+    Clean[i]<-na.omit(Matrix_DataF[i,])[length(na.omit(Matrix_DataF[i,]))]
+  }
+  return(Clean)
+}
+
+是否发热<-Func_Last(6)
+体温<-最高体温<-Func_Last(11)
+是否咳嗽<-Func_Last(15)
+是否咳痰<-Func_Last(7)
+咯痰颜色<-rep(NA,68)
+是否胸痛<-Func_Last(17)
+是否呼吸困难<-Func_Last(26)
+是否流涕<-rep(NA,68)
+是否寒战<-Func_Last(14)
+是否有乏力等<-rep(NA,68)
+是否腹泻<-rep(NA,68)
+Tmin<-Tmax<-Func_Last(11)
+心率<-Func_Last(21)
+呼吸<-Func_Last(24)
+收缩压<-Func_Last(25)
+舒张压<-Func_Last(20)
+有无意识障碍<-rep(NA,68)
+有无紫绀<-rep(NA,68)
+湿啰音<-rep(NA,68)
+干啰音<-rep(NA,68)
+有无双下肢肿胀<-rep(NA,68)
+吸氧<-Func_Last(52)
+吸氧方式<-Func_Last(63)
+氧流量<-Func_Last(77)
+氧浓度<-Func_Last(35)
+指端血氧饱和度<-Func_Last(23)
+白细胞计数<-Func_Last(130)
+中性粒细胞百分率<-Func_Last(129)#中间变量。
+中性粒细胞绝对计数<-as.numeric(白细胞计数)*as.numeric(中性粒细胞百分率)/100
+淋巴细胞绝对计数<-Func_Last(125)
+血红蛋白<-Func_Last(131)
+红细胞比积<-rep(NA,68)
+血小板计数<-Func_Last(123)
+白蛋白<-Func_Last(171)
+乳酸脱氢酶<-rep(NA,68)
+谷草转氨酶<-Func_Last(157)
+谷丙转氨酶<-Func_Last(156)
+碱性磷酸酶<-Func_Last(170)
+总胆红素<-Func_Last(169)
+直接胆红素<-Func_Last(159)
+肌酶<-Func_Last(168)
+血尿素氮<-Func_Last(152)
+血肌酐<-Func_Last(160)
+血糖<-Func_Last(155)
+血钾<-Func_Last(158)
+血钠<-Func_Last(166)
+CD4<-Func_Last(205)
+CD8<-Func_Last(201)
+NK<-Func_Last(202)
+NKT<-rep(NA,68)
+CD4_CD8<-Func_Last(206)
+红细胞沉降率<-Func_Last(128)
+C反应蛋白<-Func_Last(126)
+降钙素原<-Func_Last(127)
+D二聚体<-Func_Last(187)
+凝血酶原时间<-Func_Last(191)
+部分活化凝血酶原时间<-Func_Last(188)
+国际标准化比值INR<-Func_Last(190)
+脑钠尿肽<-rep(NA,68)
+血清铁蛋白<-Func_Last(215)
+胸片<-rep(NA,68)
+胸片检查日期<-rep(NA,68)
+胸腔积液<-rep(NA,68)
+多叶段浸润<-rep(NA,68)
+肺CT<-rep(NA,68)
+检查日期肺CT<-rep(NA,68)
+胸腔积液肺CT<-rep(NA,68)
+多叶段浸润肺CT<-rep(NA,68)
+病毒性肺炎诊断<-mylistB$登记信息[[12]]
+细菌性肺炎诊断<-mylistB$登记信息[[10]]
+不典型病原体肺炎诊断<-mylistB$登记信息[[8]]
+动脉血气分析PaO2数值<-Func_Last(177)
+动脉血气分析SaO2数值<-Func_Last(179)
+可以口服药物<-rep('可以',68)
+无精神障碍<-rep(NA,68)
+
+出院前一天<-data.frame(
+  是否发热,
+  最高体温,
+  体温,
+  是否咳嗽,
+  咯痰颜色,
+  是否胸痛,
+  是否呼吸困难,
+  是否流涕,
+  是否寒战,
+  是否有乏力等,
+  是否腹泻,
+  Tmax,
+  Tmin,
+  心率,
+  呼吸,
+  收缩压,
+  舒张压,
+  有无意识障碍,
+  有无紫绀,
+  湿啰音,
+  干啰音,
+  有无双下肢肿胀,
+  吸氧,
+  吸氧方式,
+  氧流量,
+  氧浓度,
+  指端血氧饱和度,
+  白细胞计数,
+  中性粒细胞绝对计数,
+  淋巴细胞绝对计数,
+  血红蛋白,
+  红细胞比积,
+  血小板计数,
+  白蛋白,
+  乳酸脱氢酶,
+  谷草转氨酶,
+  谷丙转氨酶,
+  碱性磷酸酶,
+  总胆红素,
+  直接胆红素,
+  肌酶,
+  血尿素氮,
+  血肌酐,
+  血糖,
+  血钾,
+  血钠,
+  CD4,
+  CD8,
+  NK,
+  NKT,
+  CD4_CD8,
+  红细胞沉降率,
+  C反应蛋白,
+  降钙素原,
+  D二聚体,
+  凝血酶原时间,
+  部分活化凝血酶原时间,
+  国际标准化比值INR,
+  脑钠尿肽,
+  血清铁蛋白,
+  胸片,
+  胸片检查日期,
+  胸腔积液,
+  多叶段浸润,
+  肺CT,
+  检查日期肺CT,
+  胸腔积液肺CT,
+  多叶段浸润肺CT,
+  病毒性肺炎诊断,
+  细菌性肺炎诊断,
+  不典型病原体肺炎诊断,
+  体温,
+  心率,
+  呼吸,
+  收缩压,
+  动脉血气分析PaO2数值,
+  动脉血气分析SaO2数值,
+  可以口服药物,
+  无精神障碍,
+  stringsAsFactors=F
+)
+write.table(t(出院前一天),file='d:/r/材料/小于6岁_出院前一天.csv',sep=',',col.names=F)
+#出院前一天_代码结束。

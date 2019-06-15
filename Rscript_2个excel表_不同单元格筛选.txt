@@ -1,0 +1,21 @@
+setwd('c:/users/win7/desktop/match比对')
+sheet1<-read.csv('sheet1.csv',header=T)
+sheet2<-read.csv('sheet2.csv',header=T)
+vec<-c()
+for(i in 1:length(sheet1$记录)){
+ vec[i]<-sheet1$记录[i]%in%sheet2$记录[i]}
+which(vec==F)
+sheet2_1<-sheet2[-(163:175),]
+msheet1<-as.matrix(sheet1)
+msheet2_1<-as.matrix(sheet2_1)
+dim(msheet1)
+matr<-matrix(nrow=162,ncol=31)
+for(j in 1:31){
+ for(i in 1:162){
+ matr[i,j]<-msheet2_1[i,j]%in%msheet1[i,j]}
+ }
+lis<-list()
+for(j in 1:31){
+ lis[[j]]<-which(matr[,j]==F)+1}
+lis
+

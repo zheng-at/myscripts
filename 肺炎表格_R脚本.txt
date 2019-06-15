@@ -1,0 +1,37 @@
+setwd('d:/r/大于6岁')
+a<-dir()[-20]
+
+mylist<-list()
+for(i in 1:length(a)){
+mylist[[i]]<-read.csv(a[i],header=T,stringsAsFactors=F,blank.lines.skip=F,na.strings=c('-','/',''))}
+
+mylista<-list()
+for(i in 1:length(a)){
+mylista[[i]]<-colnames(mylist[[i]])}
+
+lisname<-gsub(pattern='[.csv]',replacement='',x=a)
+
+names(mylist)<-lisname
+names(mylista)<-lisname
+
+func<-function(x,y){
+a<-grep(pattern=x,x=mylista[[y]],value=T)
+b<-grep(pattern=x,x=mylista[[y]],value=F)
+return(data.frame(匹配=a,下标=b))}
+
+入组号<-read.csv('clipboard',header=F,sep='\t',stringsAsFactors=F,col.names='number')
+入组号<-入组号[['number']]
+
+afunc<-function(x){
+ alis<-list()
+ for(i in 1:length(lisname)){
+ alis[[i]]<-func(x,lisname[i])}
+ names(alis)<-lisname
+ return(alis)}
+
+which(入组号%in%mylist$登记信息[[31]]==F)
+x<-c()
+for(i in 1:length(入组号[-109])){
+x[i]<-which(mylist$登记信息[[31]]==入组号[-109][i])}
+受试者姓名缩写<-c(mylist$登记信息[[21]][x[1:108]],'<NA>',mylist$登记信息[[21]][x[109:131]])
+write.table(受试者姓名缩写,file='d:/r/材料/123.csv',sep=',',col.names='受试者姓名缩写',row.names=F)
