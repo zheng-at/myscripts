@@ -1,0 +1,52 @@
+#安装mysql数据库,启动mysqld服务
+tar -xvf mysql-5.7.17.tar
+yum -y install mysql-community-*.rpm
+rpm -qa | grep -i mysql
+systemctl start mysqld
+systemctl enable mysqld
+
+#创建库db0,创建表account,输入数据
+create database db0;
+use db0;
+create table db0.account(
+编号 tinyint unsigned primary key auto_increment,
+姓名 char(15) not null default "匿名",
+密码 char(30) not null default "123456"
+)default charset=utf8;
+desc db0.account;
+insert into db0.account(姓名,密码) values
+("张晓宁","zhangxiaoning009"),
+("史丰收","1527996passwd"),
+("李晓晨","xiaochenli&&"),
+("张爽","6729%%&zhang"),
+("李晓晨","SunnyLee");
+select * from db0.account;
+
+#创建表address,输入数据
+create table db0.address(
+编号 tinyint unsigned primary key auto_increment,
+地址 char(30) not null default "未填写"
+)default charset=utf8;
+desc db0.address;
+insert into db0.address(地址) values
+("通州区新华西街"),
+("朝阳区亚运村"),
+("东城区珠市口"),
+("丰台区少年宫"),
+("朝阳区亚运村");
+select * from db0.address;
+
+#查找姓名李晓晨,地址朝阳区亚运村的人数
+select database();
+use db0;
+select count(*) from account,address where account.姓名="李晓晨" && address.地址="朝阳区亚运村" && account.编号=address.编 号;
+
+
+
+
+
+
+
+
+
+
