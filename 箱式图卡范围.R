@@ -1,0 +1,56 @@
+#试代码
+unre_time<-rnorm(n=30,mean=41.03,sd=3.87)
+class(func(d=49,e=50))=="NULL"
+class(func(d=49,e=50))=="numeric"
+set.seed(1)
+func(d=49,e=50)
+if(class(func(d=49,e=50))=="numeric"){func(d=49,e=50)}else{}
+#概率函数生成伪随机数，作箱式图，卡出统计量范围
+func<-function(m,s,a1,a2,b1,b2,c1,c2,d1,d2,e1,e2){
+result<-rnorm(n=30,mean=m,sd=s)
+max<-max(result)
+Q75<-quantile(result,.75)
+median<-median(result)
+Q25<-quantile(result,.25)
+min<-min(result)
+if(max>a1&max<a2&Q75>b1&Q75<b2&median>c1&median<c2&Q25>d1&Q25<d2&min>e1&min<e2){
+  result
+  }else{}
+}
+#未缝合组手术时间：
+i=100;while(i>0){print(func(41.03,3.87,49.6,50.6,42.6,43.68,39.9,41.6,37.6,38.8,32.6,33.8));i<-i-1}
+#缝合组手术时间：
+i=200;while(i>0){print(func(48.27,4.25,54.5,55.8,51.4,53,47.4,49.3,43.4,44.9,39.4,40.8));i<-i-1}
+#未缝合组满意度：
+i=200;while(i>0){print(func(8.07,1.46,9.4,10.5,8.4,9.5,7.4,8.5,6.4,7.5,4.5,5.5));i<-i-1}
+#缝合组满意度：
+i=200;while(i>0){print(func(7.73,1.28,9.5,10.4,8.5,9.4,6.9,8.0,6.5,7.5,4.6,5.4));i<-i-1}
+#未缝合组VAS术前：
+i=200;while(i>0){print(func(7.33,1.49,9.6,10.4,7.6,8.4,6.6,7.4,5.6,6.4,3.6,4.4));i<-i-1}
+#未缝合组VAS术后：
+i=200;while(i>0){print(func(2.9,1.03,4.6,5.4,3.6,4.4,2.6,3.4,1.6,2.4,0.6,1.4));i<-i-1}
+#缝合组VAS术前：
+i=200;while(i>0){print(func(7.23,1.48,9.7,10.3,7.7,8.3,6.7,7.3,5.7,6.3,3.7,4.4));i<-i-1}
+#缝合组VAS术后：
+i=200;while(i>0){print(func(2.57,0.82,3.5,4.5,3.5,4.5,1.8,3.2,1.5,2.5,0.5,1.5));i<-i-1}
+#未缝合组mHHS术前：
+i=200;while(i>0){print(func(59.97,8.94,76.6,79.6,65.6,68.6,57.2,60,53.8,56.6,40.8,43.5));i<-i-1}
+#未缝合组mHHS术后：
+i=200;while(i>0){print(func(84.07,4.76,95.3,96.9,87.4,89,82.5,84.3,80,81.8,74.2,76));i<-i-1}
+#缝合组mHHS术后：
+i=200;while(i>0){print(func(85.77,4.10,93.8,94.8,87.7,88.7,85.3,86.5,82.3,83.5,75.4,76.6));i<-i-1}
+#箱式图离群值处理
+func<-function(m,s,a1,a2,b1,b2,c1,c2,d1,d2,e1,e2){
+  result<-rnorm(n=29,mean=m,sd=s)
+  result[30]<-38.12
+  max<-max(result)
+  Q75<-quantile(result,.75)
+  median<-median(result)
+  Q25<-quantile(result,.25)
+  min<-min(result)
+  if(max>a1&max<a2&Q75>b1&Q75<b2&median>c1&median<c2&Q25>d1&Q25<d2&min>e1&min<e2){
+    result
+  }else{}
+}
+#缝合组mHHS术前：
+i=999;while(i>0){print(func(62.93,8.84,68.1,78.9,64.1,74.9,59.1,70.9,52.1,63.9,38.1,48.9));i<-i-1}
