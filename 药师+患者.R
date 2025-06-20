@@ -1,0 +1,767 @@
+install.packages("ggplot2") #安装ggplot2
+library(ggplot2) #加载ggplot2
+(.packages()) #查看加载的包
+help(package='ggplot2') #ggplot2帮助
+detach('package:ggplot2') #移除加载的ggplot2包
+remove.packages('ggplot2') #卸载安装的ggplot2包
+
+#创建数据框：
+patientID<-c(1,2,3,4)
+age<-c(25,34,28,52)
+diabetes<-c("Type1","Type2","Type1","Type1")
+status<-c("Poor","Improved","Excellent","Poor")
+patientdata<-data.frame(patientID,age,diabetes,status)
+patientdata
+
+install.packages('ggplot2')
+library(ggplot2)
+#1.1 MDT中药师关注问题：
+a<-c('是否按照说明书适应证用药',
+     '是否能明显改善生存率',
+     '是否能明显延缓疾病进展',
+     '如何管理药物不良反应',
+     '是否正确操作',
+     '药品价格')
+b<-c(36,41,37,43,17,18)
+Q1.1<-data.frame(a,b)
+#渐变绿色，由浅入深
+cols<-colorRampPalette(c("yellow3","mediumseagreen"))(6)
+
+#fill填充色，colour边框色,aes视觉,reorder(a,b)根据b调整a,根据reorder(a,b)填充颜色
+#分行的加号+在后面，自动生成在前面的加号+
+ggplot(data=Q1.1,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        guides(fill=FALSE)+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))
+        
+
+
+
+#返回所有blue--------------------------------------
+colours()[grep('blue',colours())]
+#降序但作图不work
+Q1.1<-Q1.1[order(Q1.1$b,decreasing = T),]
+#--------------------------------------------------
+type<-c('A','B','C','D','E','F','G')
+nums<-c(10,23,8,33,12,40,60)
+df<-data.frame(type=type,nums=nums)
+p<-ggplot(data=df,mapping=aes(x='Content',y=nums,fill=type))+geom_bar(stat='identity',position='stack')
+#coord_polar()极坐标变换
+p+coord_polar(theta='y')
+#labs()清除坐标轴标签
+p+coord_polar(theta='y')+labs(x='',y='',title='')
+#theme(axis.text=...)清除刻度值
+p+coord_polar(theta='y')+labs(x='',y='',title='')+theme(axis.text=element_blank())
+#theme(axis.ticks=...)清除刻度线
+p+coord_polar(theta='y')+labs(x='',y='',title='')+theme(axis.text=element_blank())+theme(axis.ticks=element_blank())
+#theme(legend.position='none')去掉旁边图例
+g<-p+coord_polar(theta='y')+labs(x='',y='',title='')+theme(axis.text=element_blank())+theme(axis.ticks=element_blank())+theme(legend.position='none')
+#x=sum(df$nums)/150，分母越小，标签越远；“对不准”
+g+geom_text(aes(y=df$nums/2+c(0,cumsum(df$nums)[-length(df$nums)]),x=sum(df$nums)/150,label=label))
+#--------------------------------------------------------------------------------------------------
+
+#mode():numeric,character,logical
+#is.vector()  is.data.frame()  is.matrix()  is.factor()
+A<-c(2,7,4,10,1)
+B<-c('B','A','C','D','E')
+dt<-data.frame(A,B)
+#dt<-dt[order(dt$A,decreasing = TRUE),]不work
+# dt$B是因子factor，转为向量，否则图例标签与实际顺序不一致
+myLabel<-as.vector(dt$B)
+myLabel<-paste(myLabel,'(',round(dt$A/sum(dt$A)*100,2),'%)',sep='')
+p<-ggplot(dt,aes(x='',y=reorder(B,A),fill=B))+
+        geom_bar(stat='identity')+
+        coord_polar(theta='y')+
+        labs(x='',y='')+
+        theme(axis.ticks=element_blank())+
+        theme(legend.title=element_blank(),legend.position='top')+
+        scale_fill_discrete(breaks=dt$B,labels=myLabel)+
+        theme(axis.text.x=element_blank())+
+        geom_text(aes(y=A/2+c(0,cumsum(A)[-length(A)]),x=sum(A)/20,label=myLabel),size=5)
+#-----------------------------------------------------------
+
+type<-c('Poster','Billboard','Bus','Digital')
+n<-c(529,356,59,81)
+ad<-data.frame(type=type,n=n)
+ad$fraction=ad$n/sum(ad$n)
+ad$ymax<-cumsum(ad$fraction)
+ad$ymin<-c(0,head(ad$ymax,n=-1))
+ggplot(data=ad,aes(fill=type,ymax=ymax,ymin=ymin,xmax=4,xmin=3))+
+        geom_rect(colour='grey30',show.legend = FALSE)+
+        coord_polar(theta='y')+
+        labs(x='',y='',title='')+
+        xlim(c(0,4))+
+        theme_bw()+
+        theme(panel.grid = element_blank())+
+        theme(axis.text = element_blank())+
+        theme(axis.ticks = element_blank())+
+        theme(panel.border = element_blank())+
+        geom_text(aes(x=4,y=(ymin+ymax)/2),label=type)
+#-----------------------------------------------------
+#examples,有单引号就要外加双引号
+pieval<-c(2,4,6,8)
+pielabels<-c("we hate\n pies","we oppose\n pies","we don't\n care","we just love pies")
+#fan.plot()
+slices<-c(10,12,4,16,8)
+lbls<-c('US','UK','Australia','Germany','France')
+fan.plot(slices,labels=lbls,main='Fan Plot')
+#fan.plot() Examples
+area<-c('Africa','Asia','Europe','N&C America','S America','Oceania')
+threatened<-c(5994,7737,1987,4716,5097,2093)
+iucn.df<-data.frame(area,threatened)
+attach(iucn.df)
+labels<-paste(area,threatened,sep='-')
+col<-c('red','yellow','blue','orange','green','purple')
+
+#4过去一年template
+install.packages('plotrix')
+library(plotrix)
+pievalue<-c(45,5)
+piepercent<-c("三级医院（90%）","肿瘤专科医院（10%）")
+lbcolor<-c("#5B9BD5","#BDD6EE")
+fan.plot(value,labels=percent,col=color,radius=0.55,label.radius=c(0.3,0.75))
+
+ls()#列出所有变量
+rm(list=ls())#清除所有变量
+
+#2科室
+pievalue<-c(21,16,12,1)
+piepercent<-c("其他/不知道/拒绝回答（42%）","医院药房（32%）","住院部药房（24%）","门诊药房（2%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#3药师职称
+pievalue<-c(22,17,7,4)
+piepercent<-c("其他/不知道/拒绝回答（44%）","主管药师（34%）","副主任药师（14%）","主任药师（8%）")
+ycolor<-c("#FFC000","#FFFF00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#1.2疗效满意
+pievalue<-c(24,18,8)
+piepercent<-c("不满意（48%）","说不清（36%）","满意（8%）")
+lbcolor<-c("#5B9BD5","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=lbcolor)
+#1.5超适应证治疗
+pievalue<-c(16,15,14,5)
+piepercent<-c("21~50%(占比32%)","说不清（占比30%）","0~20%（占比28）","50%以上（占比10%）")
+lbcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=lbcolor)
+#1.6超药风险
+pievalue<-c(27,13,10)
+piepercent<-c("风险较大（54%）","风险较小（26%）","说不清（20%）")
+gcolor<-c("#70AD47","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+#1.9差别
+pievalue<-c(21,20,9)
+piepercent<-c("原研药明显好（42%）","两者差别不大（40%）","不清楚（18%）")
+ycolor<-c("#FFC000","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#2.1了解
+pievalue<-c(20,20,9,1)
+piepercent<-c("基本了解（40%）","较少了解（40%）","不了解（18%）","非常了解（2%）")
+bcolor<-c("#4472C4","#3399FF","#B4C6E7","#D9E2F3")
+fan.plot(pievalue,labels=piepercent,col=bcolor,shrink=0.05)
+#2.3信息
+pievalue<-c(22,19,9)
+piepercent<-c("不知道（44%）","知道但未详细了解（38%）","知道（18%）")
+lbcolor<-c("#5B9BD5","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=lbcolor)
+#2.5 MM-398
+pievalue<-c(25,15,9,1)
+piepercent<-c("愿意（50%）","有可能（30%）","非常愿意（18%）","不愿意（2%）")
+ycolor<-c("#FFC000","#FFFF00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#2.6 IA级
+pievalue<-c(38,12)
+piepercent<-c("较了解（76%）","不知道（24%）")
+bcolor<-c("#4472C4","#B4C6E7")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#3.1充分
+pievalue<-c(28,22)
+piepercent<-c("不充分（56%）","充分（44%）")
+gcolor<-c("#70AD47","#C5E0B3")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+
+#1.1参与调查
+pievalue<-c(621,390)
+piepercent<-c("其他患者家属（61.4%）","患者本人（38.6%）")
+lbcolor<-c("#5B9BD5","#BDD6EE")
+fan.plot(pievalue,labels=piepercent,col=lbcolor)
+#1.2性别
+pievalue<-c(540,471)
+piepercent<-c("男（53.4%）","女（46.6%）")
+ocolor<-c("#ED7D31","#F7CAAC")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#1.3年龄
+pievalue<-c(303,264,219,120,78,21)
+piepercent<-c("30~39岁（30.1%）","40~49岁（26.3%）","50~59岁（21.8%）","20~29岁（11.9%）","60岁及以上（7.8%）","20岁以下（2.1%）")
+ycolor<-c("#FF9900","#FFC000","#FFCC00","#FFFF00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#2.1患病前
+pievalue<-c(741,270)
+piepercent<-c("听说过（73.3%）","没听过（26.7%）")
+bcolor<-c("#4472C4","#B4C6E7")
+fan.plot(pievalue,labels = piepercent,col = bcolor)
+#2.2科普
+pievalue<-c(522,489)
+piepercent<-c("有了解（51.6%）","无了解（48.4%）")
+gcolor<-c("#70AD47","#C5E0B3")
+fan.plot(pievalue,labels = piepercent,col=gcolor)
+#2.6就诊前
+pievalue<-c(414,393,204)
+piepercent<-c("一周以上（40.9%）","一周内（38.9%）","不记得（20.2%）")
+bcolor<-c("#4472C4","#B4C6E7","#D9E2F3")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#2.7渠道
+pievalue<-c(321,195,162,135,90,51,45,12)
+piepercent<-c("平时习惯（31.8%）","医保定点（19.3%）","之前医生推荐（16%）","其他患者介绍（13.4%）","家属决定（8.9%）","上网了解（5%）","新闻媒体宣传（4.5%）","其他（1.1%）")
+gcolor<-c("#003300","#006600","#70AD47","#00CC00","#00FF00","#66FF66","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels = piepercent,col=gcolor,label.radius = c(rep(1.1,2),1.2,rep(1.1,5)))
+#2.8渠道
+pievalue<-c(438,216,120,96,51,51,33,6)
+piepercent<-c("挂号处随机分配（43.3%）","之前医生推荐（21.4%）","其他患者介绍（11.9%）","医院宣传资料（9.5%）","上网了解（5%）","家属决定（5%）","新闻媒体宣传（3.3%）","其他（0.6%）")
+bcolor<-c("#336699","#0066CC","#0099CC","#5B9BD5","#00CCFF","#00FFFF","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#2.9首次
+pievalue<-c(531,336,144)
+piepercent<-c("是（52.5%）","否（33.2%）","不记得（14.3%）")
+ocolor<-c("#ED7D31","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#2.10漏诊
+pievalue<-c(99,99,69,36,15,12,6)
+piepercent<-c("2次（29.5%）","3次（29.5%）","4次（20.5%）","5次（10.7%）","8次及以上（4.4%）","6次（3.6%）","7次（1.8%）")
+ycolor<-c("#FF9900","#FFC000","#FFFF00","#CCFF33","#FFFF66","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#3.2是否
+pievalue<-c(510,501)
+piepercent<-c("没放弃，正在治疗（50.4%）","放弃过（49.6%）")
+ocolor<-c("#ED7D31","#F7CAAC")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#4.1提重物
+pievalue<-c(378,372,171,90)
+piepercent<-c("没有（37.4%）","有一点儿（36.8%）","有一些（16.9%）","非常多（8.9%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#4.2徒步
+pievalue<-c(369,312,243,87)
+piepercent<-c("有一点儿（36.5%）","没有（30.9%）","有一些（24%）","非常多（8.6%）")
+ycolor<-c("#FFC000","#FFCC00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#4.3户外
+pievalue<-c(345,345,243,78)
+piepercent<-c("没有（34.1%）","有一点儿（34.1%）","有一些（24%）","非常多（7.8%）")
+bcolor<-c("#4472C4","#3399FF","#B4C6E7","#D9E2F3")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#4.4
+pievalue<-c(381,339,213,78)
+piepercent<-c("没有（37.7%）","有一点儿（33.5%）","有一些（21.1%）","非常多（7.7%）")
+gcolor<-c("#70AD47","#00FF00","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+#4.5
+pievalue<-c(507,285,159,60)
+piepercent<-c("没有（50.1%）","有一点儿（28.2%）","有一些（15.7%）","非常多（6%）")
+bcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.1
+pievalue<-c(387,384,147,93)
+piepercent<-c("有一点儿（38.3%）","没有（38%）","有一些（14.5%）","非常多（9.2%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#5.2
+pievalue<-c(363,345,207,96)
+piepercent<-c("有一点儿（35.9%）","没有（34.1%）","有一些（20.5%）","非常多（9.5%）")
+ycolor<-c("#FFC000","#FFFF00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#5.3
+pievalue<-c(417,366,174,54)
+piepercent<-c("有一点儿（41.2%）","没有（36.2%）","有一些（17.2%）","非常多（5.4%）")
+bcolor<-c("#4472C4","#3399FF","#B4C6E7","#D9E2F3")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.4
+pievalue<-c(363,330,234,84)
+piepercent<-c("有一点儿（35.9%）","没有（32.6%）","有一些（23.1%）","非常多（8.4%）")
+gcolor<-c("#70AD47","#00CC00","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+#5.5
+pievalue<-c(378,309,237,87)
+piepercent<-c("有一点儿（37.4%）","没有（30.6%）","有一些（23.4%）","非常多（8.6%）")
+bcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.6
+pievalue<-c(387,306,219,99)
+piepercent<-c("有一点儿（38.3%）","没有（30.3%）","有一些（21.7%）","非常多（9.7%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#5.7
+pievalue<-c(375,297,228,111)
+piepercent<-c("有一点儿（37.1%）","没有（29.4%）","有一些（22.6%）","非常多（10.9%）")
+ycolor<-c("#FFC000","#FFFF00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#5.8
+pievalue<-c(393,300,243,75)
+piepercent<-c("有一点儿（38.9%）","没有（29.7%）","有一些（24%）","非常多（7.4%）")
+bcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.9
+pievalue<-c(375,348,210,78)
+piepercent<-c("有一点儿（37.1%）","没有（34.4%）","有一些（20.8%）","非常多（7.7%）")
+gcolor<-c("#70AD47","#00CC00","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+#5.10
+pievalue<-c(372,366,186,87)
+piepercent<-c("没有（36.8%）","有一点儿（36.2%）","有一些（18.4%）","非常多（8.6%）")
+bcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.11
+pievalue<-c(399,318,237,57)
+piepercent<-c("有一点儿（39.5%）","没有（31.5%）","有一些（23.4%）","非常多（5.6%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#5.12
+pievalue<-c(372,351,237,51)
+piepercent<-c("有一点儿（36.8%）","没有（34.7%）","有一些（23.4%）","非常多（5.1%）")
+ycolor<-c("#FFC000","#FFFF00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#5.13
+pievalue<-c(420,309,201,81)
+piepercent<-c("有一点儿（41.5%）","没有（30.6%）","有一些（19.9%）","非常多（8%）")
+bcolor<-c("#4472C4","#3399FF","#B4C6E7","#D9E2F3")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.14
+pievalue<-c(417,333,180,81)
+piepercent<-c("有一点儿（41.2%）","没有（32.9%）","有一些（17.8%）","非常多（8.1%）")
+gcolor<-c("#70AD47","#00CC00","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+#5.15
+pievalue<-c(363,345,210,93)
+piepercent<-c("有一点儿（35.9%）","没有（34.1%）","有一些（20.8%）","非常多（9.2%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#5.17
+pievalue<-c(339,333,240,99)
+piepercent<-c("有一点儿（33.5%）","没有（32.9%）","有一些（23.7%）","非常多（9.9%）")
+ycolor<-c("#FFC000","#FFFF00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#5.18
+pievalue<-c(339,312,267,93)
+piepercent<-c("有一点儿（33.5%）","没有（30.9%）","有一些（26.4%）","非常多（9.2%）")
+bcolor<-c("#4472C4","#3399FF","#B4C6E7","#D9E2F3")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.19
+pievalue<-c(336,333,234,108)
+piepercent<-c("有一点儿（33.2%）","没有（32.9%）","有一些（23.1%）","非常多（10.8%）")
+gcolor<-c("#70AD47","#00CC00","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+#5.20
+pievalue<-c(354,351,237,69)
+piepercent<-c("没有（35%）","有一点儿（34.7%）","有一些（23.4%）","非常多（6.9%）")
+bcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.21
+pievalue<-c(360,342,198,111)
+piepercent<-c("有一点儿（35.6%）","没有（33.8%）","有一些（19.6%）","非常多（11%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#5.22
+pievalue<-c(360,351,204,96)
+piepercent<-c("有一点儿（35.6%）","没有（34.7%）","有一些（20.2%）","非常多（9.5%）")
+ycolor<-c("#FFC000","#FFCC00","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor)
+#5.23
+pievalue<-c(339,336,192,144)
+piepercent<-c("没有（33.5%）","有一点儿（33.2%）","有一些（19%）","非常多（14.2%）")
+bcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#5.24
+pievalue<-c(270,231,150,135,93,87,42)
+piepercent<-c("7（占比26.8%）","5（占比22.9%）","6（占比14.9%）","4（占比13.4%）","1（占比9.2%）","3（占比8.6%）","2（占比4.2%）")
+gcolor<-c("#006600","#70AD47","#00CC00","#00FF00","#66FF66","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor,label.radius = c(rep(1.1,3),1.2,rep(1.1,3)))
+#5.25
+pievalue<-c(261,222,168,150,72,72,63)
+piepercent<-c("7（占比25.9%）","5（占比22%）","4（占比16.7%）","6（占比14.9%）","3（占比7.1%）","1（占比7.1%）","2（占比6.3%）")
+bcolor<-c("#336699","#0066CC","#0099CC","#5B9BD5","#00CCFF","#00FFFF","#BDD6EE")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#6.1
+pievalue<-c(483,375,102,51)
+piepercent<-c("非常愿意（47.8%）","愿意（37.1%）","有可能（10.1%）","不愿意（5%）")
+ocolor<-c("#ED7D31","#FF9933","#F7CAAC","#FBE4D5")
+fan.plot(pievalue,labels=piepercent,col=ocolor)
+#6.2
+pievalue<-c(387,381,90)
+piepercent<-c("明显延长生存期（45.1%）","积极治疗，勇敢面对（44.4%）","6个月能做很多事，不留遗憾（10.5%）")
+ycolor<-c("#FFC000","#FFE599","#FFF2CC")
+fan.plot(pievalue,labels=piepercent,col=ycolor,labelpos=c(0.4,1.2,2.5))
+#6.3
+pievalue<-c(18,12,9,9,3)
+piepercent<-c("担心副作用（35.3%）","6个月时间太短，没有太多价值（23.5%）","担心新药价格太贵（17.6%）","怕增加额外家庭负担（17.6%）","其他（6%）")
+bcolor<-c("#4472C4","#3399FF","#5B9BD5","#B4C6E7","#D9E2F3")
+fan.plot(pievalue,labels=piepercent,col=bcolor,label.radius=c(rep(1.1,2),1.2,rep(1.1,2)),labelpos=c(0.8,1.22,1.5,1.9,2.4))
+#6.4
+pievalue<-c(483,345,144,39)
+piepercent<-c("非常愿意（47.8%）","愿意（34.1%）","有可能（14.2%）","不愿意（3.9%）")
+gcolor<-c("#70AD47","#00CC00","#C5E0B3","#E2EFD9")
+fan.plot(pievalue,labels=piepercent,col=gcolor)
+#6.5
+pievalue<-c(450,336,150,75)
+piepercent<-c("非常愿意（44.5%）","愿意（33.2%）","有可能（14.8%）","不愿意（7.5%）")
+bcolor<-c("#5B9BD5","#2ABDF2","#BDD6EE","#DEEAF6")
+fan.plot(pievalue,labels=piepercent,col=bcolor)
+#--------------------------------------------------
+#1.3
+a<-c("超说明书适应证用药",
+     "生存率改善不理想",
+     "药物不良反应较大",
+     "用药不方便")
+b<-c(10,24,15,1)
+df<-data.frame(a,b)
+oranges<-c("#FFFF00","#FFCC00","#FF9933","#FF6600")
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=oranges)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+
+#1.4
+a<-c("白细胞计数降低",
+     "贫血",
+     "血小板计数降低",
+     "食欲减退",
+     "恶心",
+     "呕吐",
+     "便秘",
+     "腹泻",
+     "口腔炎",
+     "发热",
+     "皮疹",
+     "流感样症状",
+     "肝功能损害",
+     "神经系统毒性",
+     "心脏毒性",
+     "肾毒性",
+     "过敏反应",
+     "栓塞性静脉炎")
+b<-c(43,23,42,10,20,20,11,14,11,13,14,1,36,21,22,27,10,13)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("green","yellow"))(18)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#1.7
+a<-c("药监部门监管",
+     "卫生部门监管",
+     "处方过度偏离药品说明书",
+     "医疗纠纷",
+     "药品供应商竞争行为",
+     "说不清")
+b<-c(14,9,17,22,8,2)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("seagreen","skyblue"))(6)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#1.8
+colours()[grep('green',colours())]
+
+a<-c("疗效",
+     "不良反应",
+     "价格",
+     "用药是否方便",
+     "是否能医保报销",
+     "效益")
+b<-c(50,42,23,11,23,1)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("yellow","darkorange"))(6)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#2.2
+colours()[grep('green',colours())]
+
+a<-c("增加间质致密组织穿透性",
+     "延长对肿瘤的作用时间",
+     "增加肿瘤组织中药物浓度",
+     "使肿瘤局部药物浓度高于血清药物浓度")
+b<-c(29,31,30,28)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("yellow3","limegreen"))(4)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#2.4
+colours()[grep('green',colours())]
+
+a<-c("专业文献",
+     "新闻报道",
+     "学术会议",
+     "同行介绍",
+     "公司宣传",
+     "学术网站")
+b<-c(17,5,21,12,2,13)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("yellow","darkorange"))(6)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#3.2
+colours()[grep('green',colours())]
+
+a<-c("多参与MDT讨论",
+     "多参与临床研究",
+     "多沟通临床医生",
+     "其他")
+b<-c(46,41,43,2)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("lawngreen","skyblue"))(4)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#2.3
+colours()[grep('green',colours())]
+
+a<-c("黄疸",
+     "食欲减退",
+     "体重下降",
+     "腹痛",
+     "后背腰痛",
+     "不知道")
+b<-c(399,378,329,238,158,166)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("lightblue","forestgreen"))(6)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.5)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#2.4
+colours()[grep('green',colours())]
+
+a<-c("家族遗传",
+     "长期喝咖啡",
+     "长期高脂高蛋白饮食",
+     "吸烟",
+     "饮酒",
+     "慢性胰腺炎",
+     "糖尿病",
+     "不知道")
+b<-c(430,226,216,247,226,242,114,148)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("yellow2","darkorange1"))(8)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.4)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#2.5
+colours()[grep('green',colours())]
+
+a<-c("无症状",
+     "腹痛",
+     "背痛",
+     "食欲减退",
+     "黄疸",
+     "消瘦",
+     "皮肤瘙痒",
+     "其他")
+b<-c(270,399,277,317,178,233,117,19)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("lightseagreen","yellow1"))(8)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.4)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#2.11
+colours()[grep('green',colours())]
+
+a<-c("上网",
+     "微信公众号",
+     "医生和护士介绍",
+     "病友介绍",
+     "查阅专业文献",
+     "医药公司介绍",
+     "报纸",
+     "杂志",
+     "电视",
+     "APP",
+     "其他")
+b<-c(639,63,430,60,180,117,169,98,115,91,17)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("limegreen","steelblue"))(11)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.4)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#2.12
+colours()[grep('green',colours())]
+
+a<-c("疾病科普",
+     "专家信息",
+     "医院介绍",
+     "用药参考",
+     "国内外疾病指南",
+     "疾病保险信息",
+     "药品购买信息",
+     "新药临床试验信息",
+     "其他")
+b<-c(579,329,261,294,177,146,148,158,17)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("yellow","seagreen"))(9)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.4)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#3.1
+colours()[grep('green',colours())]
+
+a<-c("难以挂号",
+     "CT/MRI预约时间太长",
+     "穿刺预约时间太长",
+     "多次反复就诊难以确诊",
+     "不同医生有不同的治疗建议",
+     "其他")
+b<-c(478,250,249,281,316,33)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("springgreen","steelblue"))(6)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.35)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#3.3
+colours()[grep('green',colours())]
+
+a<-c("认为治疗意义不大",
+     "认为药物副作用大",
+     "疗效不佳",
+     "选择偏方、中医中药治疗",
+     "经济困难",
+     "对临床治疗的担忧/恐惧")
+b<-c(260,150,107,52,86,42)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("orange2","yellow"))(6)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.35)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#3.4
+colours()[grep('green',colours())]
+
+a<-c("还未治疗",
+     "手术治疗",
+     "新辅助化疗+手术",
+     "新辅助化疗+放疗+手术",
+     "手术+术后化疗",
+     "化疗",
+     "放疗",
+     "介入治疗",
+     "生物治疗",
+     "其他")
+b<-c(42,118,127,106,99,117,76,43,32,27)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("limegreen","steelblue"))(10)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.35)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#3.5
+colours()[grep('green',colours())]
+a<-c("0~20万",
+     "21~40万",
+     "41~60万",
+     "61~80万",
+     "81~100万",
+     "101万及以上")
+b<-c(546,273,141,27,12,12)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("yellow","lawngreen"))(6)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.35)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
+#3.6
+colours()[grep('green',colours())]
+
+a<-c("多科门诊一起讨论解决问题",
+     "绿色通道预约检查和安排手术及其他治疗",
+     "多进行临床研究，给患者更多选择",
+     "多进行科普教育，提高患者认知",
+     "其他")
+b<-c(473,422,395,320,11)
+df<-data.frame(a,b)
+cols<-colorRampPalette(c("#4472C4","#D9E2F3"))(5)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+        geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+        labs(x="",y="")+
+        scale_fill_manual(values=cols)+
+        geom_text(mapping=aes(label=b),size=5,hjust=-0.35)+
+        theme(axis.text.y=element_text(size=15,face='bold'))+
+        theme(axis.text.x=element_text(size=12))+
+        guides(fill=FALSE)
