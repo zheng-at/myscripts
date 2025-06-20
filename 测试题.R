@@ -1,0 +1,43 @@
+library(ggplot2)
+library(RColorBrewer)
+a<-c("高血压",
+     "乏力",
+     "蛋白尿",
+     "γ-谷氨酰转移酶增加",
+     "腹痛",
+     "药物过量",
+     "肛瘘",
+     "胆囊炎",
+     "意识模糊",
+     "囊肿",
+     "脱水",
+     "QT间期延长",
+     "低钠血症",
+     "淋巴细胞计数减少",
+     "掌跖感觉丧失性红斑综合征",
+     "胰腺炎",
+     "肛周脓肿",
+     "胸膜痛",
+     "气胸",
+     "肺栓塞",
+     "皮肤溃疡",
+     "气管瘘",
+     "呕吐",
+     "体重下降")
+b<-c(8,3,2,2,rep(1,20))
+#cols<-rep(brewer.pal(12,"Set3"),2)
+c<-c(24,9,6,6,rep(3,20))
+d<-paste(b,"例(",c,"%)",sep="")
+df<-data.frame(a,b)
+ggplot(data=df,mapping=aes(x=b,y=reorder(a,b)))+
+  geom_bar(stat="identity",aes(fill=reorder(a,b)),width=0.6)+
+  labs(x="治疗期间出现的≥3级的不良事件（例数，%）",y="")+
+  geom_text(mapping=aes(label=d),size=4,hjust=-0.2,fontface="italic",colour="blue")+
+  theme(axis.text.y=element_text(size=12,face="bold"))+
+  theme(axis.text.x=element_blank())+
+  theme(axis.ticks.x=element_blank())+
+#  theme(axis.text.x=element_text(size=12))+
+  theme(legend.position="none")+
+  theme(axis.title.x=element_text(size=15,face="bold"))+
+  coord_cartesian(xlim=c(0,9))
+#  scale_fill_manual(values=cols)
