@@ -1,5 +1,0 @@
-install.packages("xlsx")
-library(xlsx)
-setwd("C:/Users/24066/Desktop/医学监查R")
-getwd()
-dir()
